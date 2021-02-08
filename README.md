@@ -18,6 +18,7 @@ static RuleSet getRules() { }
 ```
 
 
+
 Make sure to have the proper imports.
 
 Sample configuration:
