@@ -17,6 +17,8 @@ Create a Groovy class that implements a method, and build and return a RuleSet.
 static RuleSet getRules() { }
 ```
 
+
+
 Make sure to have the proper imports.
 
 Sample configuration:
