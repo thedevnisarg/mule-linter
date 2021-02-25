@@ -31,11 +31,18 @@ jobs:
 
       - name: Compile
         run: ./gradlew assemble
-        
+
       - name: Verify
         run: ./gradlew check -x test
 #      - name: JUnit Test
 #        run: ./gradlew test
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          files: ./build/test-results/test/*.xml
 
       - name: Publish Artifact
         if: github.event_name != 'pull_request'
