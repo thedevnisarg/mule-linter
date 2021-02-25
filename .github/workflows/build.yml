@@ -33,9 +33,7 @@ jobs:
         run: ./gradlew assemble
 
       - name: Verify
-        run: ./gradlew check -x test
-#      - name: JUnit Test
-#        run: ./gradlew test
+        run: ./gradlew check
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
