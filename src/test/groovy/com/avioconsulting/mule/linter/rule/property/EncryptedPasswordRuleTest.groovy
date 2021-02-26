@@ -36,7 +36,6 @@ class EncryptedPasswordRuleTest extends Specification {
         violations.size() == 0
     }
 
-    @Ignore
     def 'Property File not encrypted password'() {
         given:
         testApp.addFile('src/main/resources/properties/sample-mule-app.test.properties', BAD_PROPERTY_1)
