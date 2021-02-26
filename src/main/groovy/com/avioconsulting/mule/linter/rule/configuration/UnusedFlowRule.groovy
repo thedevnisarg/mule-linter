@@ -7,9 +7,8 @@ import com.avioconsulting.mule.linter.model.rule.RuleViolation
 class UnusedFlowRule extends Rule {
 
     static final String RULE_ID = 'UNUSED_FLOW'
-    static final String RULE_NAME = 'All Flow and sub-flow are used in application.'
-    static final String RULE_VIOLATION_MESSAGE = 'Flow component is unused. ' +
-            'The following flow is not referenced by any flow ref components: '
+    static final String RULE_NAME = 'All flows and sub-flows are used in application. '
+    static final String RULE_VIOLATION_MESSAGE = 'The following flow is not referenced by any flow ref components: '
 
     UnusedFlowRule() {
         this.ruleId = RULE_ID
@@ -23,7 +22,7 @@ class UnusedFlowRule extends Rule {
         List<String> flowRefs = app.flowrefs*.name
 
         app.allFlows.each { flow ->
-            if ( !flow.isApiKitFlow() && !flow.hasListner() ) {
+            if ( !flow.isApiKitFlow() && !flow.hasSource() ) {
                 if ( !flowRefs.contains(flow.name) ) {
                     violations.add(new RuleViolation(this, flow.file.path,
                             flow.getLineNumber(), RULE_VIOLATION_MESSAGE + flow.name))

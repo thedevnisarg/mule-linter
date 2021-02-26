@@ -13,14 +13,13 @@ import groovy.xml.slurpersupport.Node
 @SuppressWarnings('SpaceAroundMapEntryColon')
 class ConfigurationFile extends ProjectFile {
 
-    static final String MULE_CORE_NAMESPACE = 'http://www.mulesoft.org/schema/mule/core'
     static final String ELEMENT_FLOWREF = 'flow-ref'
     MuleXmlParser parser
     private final GPathResult configXml
     private final Boolean exists
-    private Map<String, String> nonGlobalConfig = ['sub-flow'     : MULE_CORE_NAMESPACE,
-                                                   'flow'         : MULE_CORE_NAMESPACE,
-                                                   'error-handler': MULE_CORE_NAMESPACE]
+    private Map<String, String> nonGlobalConfig = ['sub-flow'     : Namespace.CORE,
+                                                   'flow'         : Namespace.CORE,
+                                                   'error-handler': Namespace.CORE]
 
     ConfigurationFile(File file) {
         super(file)
@@ -53,7 +52,8 @@ class ConfigurationFile extends ProjectFile {
         }
 
         comps.each { comp ->
-            componentList.add(new MuleComponent(comp.name(), comp.namespaceURI(), comp.attributes(), getFile()))
+            componentList.add(new MuleComponent(comp.name(), comp.namespaceURI(), comp.attributes(), getFile(),
+                    getNestedComponent(comp)))
         }
         return componentList
     }
@@ -69,7 +69,7 @@ class ConfigurationFile extends ProjectFile {
         }
 
         comps.each { comp ->
-            componentList.add(new MuleComponent(comp.name(), comp.namespaceURI(), comp.attributes(), getFile()))
+            componentList.add(new MuleComponent(comp.name(), comp.namespaceURI(), comp.attributes(), getFile(), getNestedComponent(comp)))
         }
         return componentList
     }
@@ -105,6 +105,15 @@ class ConfigurationFile extends ProjectFile {
         return componentList
     }
 
+    List<MuleComponent> getNestedComponent(Node comp) {
+        List<MuleComponent> componentList = []
+        comp.childNodes().each {
+            componentList.add(new MuleComponent(it.name(), it.namespaceURI(), it.attributes(), getFile(),
+                    getNestedComponent((Node) it)))
+        }
+        return componentList
+    }
+
     List<LoggerComponent> findLoggerComponents() {
         List<LoggerComponent> loggerComponents = []
         searchComponentType(LoggerComponent.COMPONENT_NAME, LoggerComponent.COMPONENT_NAMESPACE).each {
@@ -134,7 +143,7 @@ class ConfigurationFile extends ProjectFile {
     }
 
     List<MuleComponent> getFlowrefs() {
-        return findComponents(ELEMENT_FLOWREF, MULE_CORE_NAMESPACE)
+        return findComponents(ELEMENT_FLOWREF, Namespace.CORE)
     }
 
     List<FlowComponent> getAllFlows() {
